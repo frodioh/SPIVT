@@ -1,5 +1,5 @@
 import cv2
-import numpy
+import numpy as np
 import os
 import imutils
 from sklearn.svm import LinearSVC
@@ -32,7 +32,7 @@ des_list = []
 
 for image_path in image_paths:
     im = cv2.imread(image_path)
-    (kpts, des) = sift.detectAndCompute(im)
+    kpts, des = sift.detectAndCompute(im)
     des_list.append((image_path, des))
 
 # Все дескрипторы складываются вертикально в numpy массив
