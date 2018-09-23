@@ -73,6 +73,6 @@ if args["visualize"]:
         image = cv2.imread(image_path)
         cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
         pt = (0, 3 * image.shape[0] // 4)
-        cv2.putText(image, prediction, pt ,cv2.FONT_HERSHEY_DUPLEX, 2, [0, 255, 0], 2)
+        cv2.putText(image, prediction, pt ,cv2.FONT_HERSHEY_DUPLEX, 2, [255, 255, 255], 2)
         cv2.imshow("Image", image)
         cv2.waitKey(3000)
