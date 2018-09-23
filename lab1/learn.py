@@ -1,4 +1,4 @@
-import cv2 as cv
+import cv2
 import numpy
 import os
 import imutils
@@ -9,7 +9,7 @@ from sklearn.preprocessing import StandardScaler
 
 print(cv.__version__)
 
-dataset_path = "/dataset"
+dataset_path = "./dataset"
 
 # Список классов, которые будем тренировать. (формируется по списку директорий)
 training_classes = os.listdir(dataset_path)
@@ -25,16 +25,14 @@ for training_class in training_classes:
 	class_id += 1
 
 # Используются SIFT дескрипторы
-fea_det = cv2.FeatureDetector_create("SIFT")
-des_ext = cv2.DescriptorExtractor_create("SIFT")
+sift  = cv2.xfeatures2d.SIFT_create()
 
 # Список всех дескрипторов
 des_list = []
 
 for image_path in image_paths:
     im = cv2.imread(image_path)
-    kpts = fea_det.detect(im)
-    kpts, des = des_ext.compute(im, kpts)
+    (kpts, des) = sift.detectAndCompute(im)
     des_list.append((image_path, des))
 
 # Все дескрипторы складываются вертикально в numpy массив
