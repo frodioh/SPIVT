@@ -7,7 +7,7 @@ from sklearn.externals import joblib
 from scipy.cluster.vq import *
 from sklearn.preprocessing import StandardScaler
 
-print(cv.__version__)
+print(cv2.__version__)
 
 dataset_path = "./dataset"
 
@@ -32,7 +32,7 @@ des_list = []
 
 for image_path in image_paths:
     im = cv2.imread(image_path)
-    kpts, des = sift.detectAndCompute(im)
+    kpts, des = sift.detectAndCompute(im, None)
     des_list.append((image_path, des))
 
 # Все дескрипторы складываются вертикально в numpy массив

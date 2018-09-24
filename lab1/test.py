@@ -43,7 +43,7 @@ for image_path in image_paths:
     if im == None:
         print "No such file {}\nCheck if the file exists".format(image_path)
         exit()
-    kpts, des = sift.detectAndCompute(im)
+    kpts, des = sift.detectAndCompute(im, None)
     des_list.append((image_path, des))   
     
 # Stack all the descriptors vertically in a numpy array
