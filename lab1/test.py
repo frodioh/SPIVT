@@ -52,7 +52,7 @@ for image_path, descriptor in des_list[0:]:
     descriptors = np.vstack((descriptors, descriptor)) 
 
 test_features = np.zeros((len(image_paths), k), "float32")
-for i in xrange(len(image_paths)):
+for i in range(len(image_paths)):
     words, distance = vq(des_list[i][1],voc)
     for w in words:
         test_features[i][w] += 1
