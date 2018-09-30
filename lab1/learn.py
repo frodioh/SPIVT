@@ -1,5 +1,5 @@
-import cv2
 import numpy as np
+import cv2
 import os
 import imutils
 from sklearn.svm import LinearSVC
@@ -52,7 +52,7 @@ for i in range(len(image_paths)):
         im_features[i][w] += 1
 
 # TF-IDF vectorization
-nbr_occurences = np.sum( (im_features > 0) * 1, axis = 0)
+nbr_jkoccurences = np.sum( (im_features > 0) * 1, axis = 0)
 idf = np.array(np.log((1.0*len(image_paths)+1) / (1.0*nbr_occurences + 1)), 'float32')
 
 # Масштабирование слов
@@ -64,4 +64,4 @@ clf = LinearSVC()
 clf.fit(im_features, np.array(image_classes))
 
 # Сохранение SVM
-joblib.dump((clf, training_classes, stdSlr, k, voc), "bof.pkl", compress=3)    
+joblib.dump((clf, training_classes, stdSlr, k, voc), "bof.pkl", compress=3)
