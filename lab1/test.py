@@ -24,7 +24,6 @@ if args["testingSet"]:
     try:
         testing_names = os.listdir(test_path)
     except OSError:
-        print "No such directory {}\nCheck if the file exists".format(test_path)
         exit()
     for testing_name in testing_names:
         dir = os.path.join(test_path, testing_name)
@@ -40,9 +39,6 @@ des_list = []
 
 for image_path in image_paths:
     im = cv2.imread(image_path)
-    if im == None:
-        print "No such file {}\nCheck if the file exists".format(image_path)
-        exit()
     kpts, des = sift.detectAndCompute(im, None)
     des_list.append((image_path, des))   
     
@@ -73,6 +69,6 @@ if args["visualize"]:
         image = cv2.imread(image_path)
         cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
         pt = (0, 3 * image.shape[0] // 4)
-        cv2.putText(image, prediction, pt ,cv2.FONT_HERSHEY_DUPLEX, 2, [255, 255, 255], 2)
+        cv2.putText(image, prediction, pt ,cv2.FONT_HERSHEY_DUPLEX, 2, [255, 0, 0], 2)
         cv2.imshow("Image", image)
         cv2.waitKey(3000)

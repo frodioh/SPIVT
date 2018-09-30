@@ -9,7 +9,7 @@ from sklearn.preprocessing import StandardScaler
 
 print(cv2.__version__)
 
-dataset_path = "./dataset"
+dataset_path = "./dataset/train"
 
 # Список классов, которые будем тренировать. (формируется по списку директорий)
 training_classes = os.listdir(dataset_path)
