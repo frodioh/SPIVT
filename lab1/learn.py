@@ -9,7 +9,7 @@ from sklearn.preprocessing import StandardScaler
 
 print(cv2.__version__)
 
-dataset_path = "./dataset/train"
+dataset_path = "./dataset/all"
 
 # Список классов, которые будем тренировать. (формируется по списку директорий)
 training_classes = os.listdir(dataset_path)
@@ -52,7 +52,7 @@ for i in range(len(image_paths)):
         im_features[i][w] += 1
 
 # TF-IDF vectorization
-nbr_jkoccurences = np.sum( (im_features > 0) * 1, axis = 0)
+nbr_occurences = np.sum( (im_features > 0) * 1, axis = 0)
 idf = np.array(np.log((1.0*len(image_paths)+1) / (1.0*nbr_occurences + 1)), 'float32')
 
 # Масштабирование слов

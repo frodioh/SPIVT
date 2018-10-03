@@ -36,10 +36,12 @@ sift = cv2.xfeatures2d.SIFT_create()
 
 # Массив всех дескрипторов
 des_list = []
+kpts_list = []
 
 for image_path in image_paths:
     im = cv2.imread(image_path)
     kpts, des = sift.detectAndCompute(im, None)
+    kpts_list.append(kpts)
     des_list.append((image_path, des))   
     
 # Stack all the descriptors vertically in a numpy array
@@ -60,15 +62,17 @@ idf = np.array(np.log((1.0*len(image_paths)+1) / (1.0*nbr_occurences + 1)), 'flo
 # Масштабирование слов
 test_features = stdSlr.transform(test_features)
 
-# Предсказания
+# Прогнозирование
 predictions =  [classes_names[i] for i in clf.predict(test_features)]
 
 # Визуализация результатов
 if args["visualize"]:
-    for image_path, prediction in zip(image_paths, predictions):
+    for image_path, prediction, kp in zip(image_paths, predictions, kpts_list):
         image = cv2.imread(image_path)
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        image = cv2.drawKeypoints(gray,kp,image,flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
         cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
         pt = (0, 3 * image.shape[0] // 4)
         cv2.putText(image, prediction, pt ,cv2.FONT_HERSHEY_DUPLEX, 2, [255, 0, 0], 2)
         cv2.imshow("Image", image)
-        cv2.waitKey(3000)
+        cv2.waitKey(0)

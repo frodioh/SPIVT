@@ -1,6 +1,11 @@
 import cv2
 
-IMAGE_FILE = './test/test-10.pgm'
+IMAGE_FILE1 = './test/test-1.pgm'
+IMAGE_FILE = './dataset/test/n04487081/image_17.jpg'
+IMAGE_FILE2 = './dataset/test/n04487081/image_0.jpg'
+IMAGE_FILE3 = './dataset/test/n04487081/image_0.jpg'
+IMAGE_FILE4 = './dataset/test/n04487081/image_0.jpg'
+IMAGE_FILE5 = './dataset/test/n04487081/image_0.jpg'
 CASCADE_FILE = './data/cascade.xml'
 CASCADE_ITEM = 'Car'
 
@@ -9,7 +14,7 @@ gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 cascade = cv2.CascadeClassifier(CASCADE_FILE)
 # Фиксирование объектов и обёртывание их в прямоугольники
-rectangles = cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=5000, minSize=(50, 20))
+rectangles = cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=10, minSize=(50, 20))
 for (i, (x, y, w, h)) in enumerate(rectangles):
 	cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
 	cv2.putText(image, CASCADE_ITEM + " #{}".format(i + 1), (x, y - 10),
