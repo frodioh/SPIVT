@@ -10,8 +10,8 @@ from scipy.cluster.vq import *
 
 clf, classes_names, stdSlr, k, voc = joblib.load("bof.pkl")
 
-IMAGE_FILE = './test/test-1.pgm'
-CASCADE_FILE = './cars.xml'
+IMAGE_FILE = './dataset/1.jpg'
+CASCADE_FILE = './data/cascade.xml'
 
 image = cv2.imread(IMAGE_FILE)
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
