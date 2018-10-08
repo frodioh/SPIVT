@@ -7,8 +7,6 @@ from sklearn.externals import joblib
 from scipy.cluster.vq import *
 from sklearn.preprocessing import StandardScaler
 
-print(cv2.__version__)
-
 dataset_path = "./dataset/train"
 
 # Список классов, которые будем тренировать. (формируется по списку директорий)
@@ -64,4 +62,4 @@ clf = LinearSVC()
 clf.fit(im_features, np.array(image_classes))
 
 # Сохранение SVM
-joblib.dump((clf, training_classes, stdSlr, k, voc), "bof.pkl", compress=3)
+joblib.dump((clf, training_classes, stdSlr, k, voc), "bow.pkl", compress=3)

@@ -8,9 +8,9 @@ from sklearn.svm import LinearSVC
 from sklearn.externals import joblib
 from scipy.cluster.vq import *
 
-clf, classes_names, stdSlr, k, voc = joblib.load("bof.pkl")
+clf, classes_names, stdSlr, k, voc = joblib.load("bow.pkl")
 
-IMAGE_FILE = './dataset/1.jpg'
+IMAGE_FILE = './dataset/test/12.jpg'
 CASCADE_FILE = './data/cascade.xml'
 
 image = cv2.imread(IMAGE_FILE)
@@ -18,7 +18,7 @@ gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 cascade = cv2.CascadeClassifier(CASCADE_FILE)
 
 # Фиксирование объектов и обёртывание их в прямоугольники
-rectangles = cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=25, minSize=(100, 100))
+rectangles = cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=19, minSize=(30, 30))
 
 # Используются sift дескрипторы
 sift = cv2.xfeatures2d.SIFT_create()
