@@ -1,20 +1,3 @@
-# Copyright 2017 The TensorFlow Authors. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-"""Model definitions for simple speech recognition.
-
-"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -29,7 +12,7 @@ import tarfile
 
 import numpy as np
 from six.moves import urllib
-from six.moves import xrange  # pylint: disable=redefined-builtin
+from six.moves import xrange
 import tensorflow as tf
 
 from tensorflow.contrib.framework.python.ops import audio_ops as contrib_audio
@@ -45,54 +28,14 @@ UNKNOWN_WORD_INDEX = 1
 BACKGROUND_NOISE_DIR_NAME = '_background_noise_'
 RANDOM_SEED = 59185
 
-
+#Список слов из набора, которые будут распознаваться
 def prepare_words_list(wanted_words):
-  """Prepends common tokens to the custom word list.
-
-  Args:
-    wanted_words: List of strings containing the custom words.
-
-  Returns:
-    List with the standard silence and unknown tokens added.
-  """
   return [SILENCE_LABEL, UNKNOWN_WORD_LABEL] + wanted_words
 
-
+#Сообщает к какому набору данных принадлежит файл (training, validation, testing)
 def which_set(filename, validation_percentage, testing_percentage):
-  """Determines which data partition the file should belong to.
-
-  We want to keep files in the same training, validation, or testing sets even
-  if new ones are added over time. This makes it less likely that testing
-  samples will accidentally be reused in training when long runs are restarted
-  for example. To keep this stability, a hash of the filename is taken and used
-  to determine which set it should belong to. This determination only depends on
-  the name and the set proportions, so it won't change as other files are added.
-
-  It's also useful to associate particular files as related (for example words
-  spoken by the same person), so anything after '_nohash_' in a filename is
-  ignored for set determination. This ensures that 'bobby_nohash_0.wav' and
-  'bobby_nohash_1.wav' are always in the same set, for example.
-
-  Args:
-    filename: File path of the data sample.
-    validation_percentage: How much of the data set to use for validation.
-    testing_percentage: How much of the data set to use for testing.
-
-  Returns:
-    String, one of 'training', 'validation', or 'testing'.
-  """
   base_name = os.path.basename(filename)
-  # We want to ignore anything after '_nohash_' in the file name when
-  # deciding which set to put a wav in, so the data set creator has a way of
-  # grouping wavs that are close variations of each other.
   hash_name = re.sub(r'_nohash_.*$', '', base_name)
-  # This looks a bit magical, but we need to decide whether this file should
-  # go into the training, testing, or validation sets, and we want to keep
-  # existing files in the same set even if more files are subsequently
-  # added.
-  # To do that, we need a stable way of deciding based on just the file name
-  # itself, so we do a hash of that and then use that to generate a
-  # probability value that we use to assign it.
   hash_name_hashed = hashlib.sha1(compat.as_bytes(hash_name)).hexdigest()
   percentage_hash = ((int(hash_name_hashed, 16) %
                       (MAX_NUM_WAVS_PER_CLASS + 1)) *
@@ -105,16 +48,8 @@ def which_set(filename, validation_percentage, testing_percentage):
     result = 'training'
   return result
 
-
+#Отрывает wav-файл и возвращает numpy-массив PCM (элементы - float-ы между -1.0 и 1.0)
 def load_wav_file(filename):
-  """Loads an audio file and returns a float PCM-encoded array of samples.
-
-  Args:
-    filename: Path to the .wav file to load.
-
-  Returns:
-    Numpy array holding the sample data as floats between -1.0 and 1.0.
-  """
   with tf.Session(graph=tf.Graph()) as sess:
     wav_filename_placeholder = tf.placeholder(tf.string, [])
     wav_loader = io_ops.read_file(wav_filename_placeholder)
@@ -123,15 +58,8 @@ def load_wav_file(filename):
         wav_decoder,
         feed_dict={wav_filename_placeholder: filename}).audio.flatten()
 
-
+#Сохраняет wav-файл, формируя его из PCM данных
 def save_wav_file(filename, wav_data, sample_rate):
-  """Saves audio sample data to a .wav audio file.
-
-  Args:
-    filename: Path to save the file to.
-    wav_data: 2D array of float PCM-encoded audio data.
-    sample_rate: Samples per second to encode in the file.
-  """
   with tf.Session(graph=tf.Graph()) as sess:
     wav_filename_placeholder = tf.placeholder(tf.string, [])
     sample_rate_placeholder = tf.placeholder(tf.int32, [])

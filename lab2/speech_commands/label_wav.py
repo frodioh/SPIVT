@@ -1,25 +1,5 @@
-# Copyright 2017 The TensorFlow Authors. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-r"""Runs a trained audio graph against a WAVE file and reports the results.
-
-The model, labels and .wav file specified in the arguments will be loaded, and
-then the predictions from running the model against the audio data will be
-printed to the console. This is a useful script for sanity checking trained
-models, and as an example of how to use an audio model from Python.
-
-Here's an example of running it:
+"""
+Пример запуска
 
 python tensorflow/examples/speech_commands/label_wav.py \
 --graph=/tmp/my_frozen_graph.pb \
@@ -33,8 +13,10 @@ from __future__ import print_function
 
 import argparse
 import sys
-
 import tensorflow as tf
+import pyaudio
+import wave
+import time
 
 # pylint: disable=unused-import
 from tensorflow.contrib.framework.python.ops import audio_ops as contrib_audio
@@ -42,9 +24,7 @@ from tensorflow.contrib.framework.python.ops import audio_ops as contrib_audio
 
 FLAGS = None
 
-
 def load_graph(filename):
-  """Unpersists graph from file as default graph."""
   with tf.gfile.FastGFile(filename, 'rb') as f:
     graph_def = tf.GraphDef()
     graph_def.ParseFromString(f.read())
@@ -52,7 +32,6 @@ def load_graph(filename):
 
 
 def load_labels(filename):
-  """Read in labels, one label per line."""
   return [line.rstrip() for line in tf.gfile.GFile(filename)]
 
 
@@ -79,36 +58,66 @@ def run_graph(wav_data, labels, input_layer_name, output_layer_name,
 
 def label_wav(wav, labels, graph, input_name, output_name, how_many_labels):
   """Loads the model and labels, and runs the inference to print predictions."""
-  if not wav or not tf.gfile.Exists(wav):
-    tf.logging.fatal('Audio file does not exist %s', wav)
 
-  if not labels or not tf.gfile.Exists(labels):
-    tf.logging.fatal('Labels file does not exist %s', labels)
+  if wav == 'record':
+    CHUNK = 500
+    FORMAT = pyaudio.paInt16
+    CHANNELS = 1
+    RATE = 44100
+    RECORD_SECONDS = 1
+    WAVE_OUTPUT_FILENAME = "output.wav"
+    wav = WAVE_OUTPUT_FILENAME
 
-  if not graph or not tf.gfile.Exists(graph):
-    tf.logging.fatal('Graph file does not exist %s', graph)
+    print('Запись через:')
+    print('3')
+    time.sleep(1)
+    print('2')
+    time.sleep(1)
+    print('1')
+    time.sleep(1)
+
+    p = pyaudio.PyAudio()
+
+    stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK)
+
+    print("* запись")
+
+    frames = []
+
+    for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+      data = stream.read(CHUNK)
+      frames.append(data)
+
+      print("* done recording")
+
+      stream.stop_stream()
+      stream.close()
+      p.terminate()
+
+      wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+      wf.setnchannels(CHANNELS)
+      wf.setsampwidth(p.get_sample_size(FORMAT))
+      wf.setframerate(RATE)
+      wf.writeframes(b''.join(frames))
+      wf.close()
+
+  with open(wav, 'rb') as wav_file:
+    wav_data = wav_file.read()
 
   labels_list = load_labels(labels)
 
   # load graph, which is stored in the default session
   load_graph(graph)
 
-  with open(wav, 'rb') as wav_file:
-    wav_data = wav_file.read()
-
   run_graph(wav_data, labels_list, input_name, output_name, how_many_labels)
 
-
 def main(_):
-  """Entry point for script, converts flags to arguments."""
-  label_wav(FLAGS.wav, FLAGS.labels, FLAGS.graph, FLAGS.input_name,
-            FLAGS.output_name, FLAGS.how_many_labels)
-
+  label_wav(FLAGS.wav, FLAGS.labels, FLAGS.graph, FLAGS.input_name, FLAGS.output_name, FLAGS.how_many_labels)
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument(
-      '--wav', type=str, default='', help='Audio file to be identified.')
+      '--wav', type=str, default='record', help='Audio file to be identified.')
   parser.add_argument(
       '--graph', type=str, default='', help='Model to use for identification.')
   parser.add_argument(
