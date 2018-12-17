@@ -14,8 +14,10 @@ from __future__ import print_function
 import argparse
 import sys
 import tensorflow as tf
-import pyaudio
-import wave
+import sounddevice as sd
+import numpy as np
+import scipy.io.wavfile as scwav
+import keyboard
 import time
 
 # pylint: disable=unused-import
@@ -60,46 +62,21 @@ def label_wav(wav, labels, graph, input_name, output_name, how_many_labels):
   """Loads the model and labels, and runs the inference to print predictions."""
 
   if wav == 'record':
-    CHUNK = 500
-    FORMAT = pyaudio.paInt16
-    CHANNELS = 1
-    RATE = 44100
-    RECORD_SECONDS = 1
-    WAVE_OUTPUT_FILENAME = "output.wav"
-    wav = WAVE_OUTPUT_FILENAME
+    #fs=44100
+    #duration = 1
+    #print('Для записи нажмите r...')
+    #is_recording = False
+    #while True:
+#        if keyboard.is_pressed('r') and not(is_recording):
+#            myrecording = sd.rec(duration * fs, samplerate=fs, channels=1,dtype='int16')
+#            is_recording = True
+#        if not(keyboard.is_pressed('r')) and is_recording:
+#            sd.stop()
+#            is_recording = False
+#            break
+#    scwav.write('out.wav', fs, myrecording)
+    wav = '/home/radiorodeo/Dropbox/Projects/SPIVT/lab2/speech_commands/conv.wav'
 
-    print('Запись через:')
-    print('3')
-    time.sleep(1)
-    print('2')
-    time.sleep(1)
-    print('1')
-    time.sleep(1)
-
-    p = pyaudio.PyAudio()
-
-    stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK)
-
-    print("* запись")
-
-    frames = []
-
-    for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-      data = stream.read(CHUNK)
-      frames.append(data)
-
-      print("* done recording")
-
-      stream.stop_stream()
-      stream.close()
-      p.terminate()
-
-      wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
-      wf.setnchannels(CHANNELS)
-      wf.setsampwidth(p.get_sample_size(FORMAT))
-      wf.setframerate(RATE)
-      wf.writeframes(b''.join(frames))
-      wf.close()
 
   with open(wav, 'rb') as wav_file:
     wav_data = wav_file.read()
