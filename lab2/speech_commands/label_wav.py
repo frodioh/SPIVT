@@ -1,12 +1,9 @@
 """
-Пример запуска
-
-python tensorflow/examples/speech_commands/label_wav.py \
---graph=/tmp/my_frozen_graph.pb \
---labels=/tmp/speech_commands_train/conv_labels.txt \
---wav=/tmp/speech_dataset/left/a5d485dc_nohash_0.wav
-
+Обучить искуccтвенную нейросеть для решения задачи распознавания слова.
+Входные данные: аудиофайл wav
+Выходные данные: распознанное слово
 """
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -62,19 +59,6 @@ def label_wav(wav, labels, graph, input_name, output_name, how_many_labels):
   """Loads the model and labels, and runs the inference to print predictions."""
 
   if wav == 'record':
-    #fs=44100
-    #duration = 1
-    #print('Для записи нажмите r...')
-    #is_recording = False
-    #while True:
-#        if keyboard.is_pressed('r') and not(is_recording):
-#            myrecording = sd.rec(duration * fs, samplerate=fs, channels=1,dtype='int16')
-#            is_recording = True
-#        if not(keyboard.is_pressed('r')) and is_recording:
-#            sd.stop()
-#            is_recording = False
-#            break
-#    scwav.write('out.wav', fs, myrecording)
     wav = '/home/radiorodeo/Dropbox/Projects/SPIVT/lab2/speech_commands/conv.wav'
 
 
@@ -112,7 +96,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--how_many_labels',
       type=int,
-      default=3,
+      default=100,
       help='Number of results to show.')
 
   FLAGS, unparsed = parser.parse_known_args()
